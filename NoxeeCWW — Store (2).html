@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NoxeeCWW — Store</title>
+<meta name="description" content="NoxeeCWW — cinematic presets, CC and effects for creators.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#08080a; --bg-elev:#0f0f13; --bg-card:#131318; --line:rgba(255,255,255,.09);
+  --text:#f3f2f7; --text-dim:#9997a6; --text-faint:#6b6976;
+  --accent:#7c5cff; --accent-soft:rgba(124,92,255,.28); --accent-glow:rgba(124,92,255,.55);
+  --amber:#ffb454; --teal:#3fe6c4;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px); box-sizing:border-box;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth; scroll-padding-top:96px; height:100%;}
+body{background:var(--bg); color:var(--text); font-family:'Manrope',sans-serif; line-height:1.5; overflow-x:hidden; min-height:100%;}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]){}}
+img,svg{max-width:100%;}
+a{color:inherit; text-decoration:none;}
+h1,h2,h3{font-family:'Unbounded',sans-serif; letter-spacing:-.01em;}
+.wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
+::selection{background:var(--accent); color:#fff;}
+button{font-family:inherit;}
+
+header{position:fixed; top:0; left:0; right:0; z-index:50; padding-top:env(safe-area-inset-top,0px);
+  background:rgba(8,8,10,.72); backdrop-filter:blur(14px); border-bottom:1px solid var(--line);}
+nav{display:flex; align-items:center; justify-content:space-between; padding:18px 28px; max-width:1180px; margin:0 auto; gap:18px;}
+.logo{font-family:'Unbounded'; font-weight:700; font-size:1.15rem; letter-spacing:.02em;}
+.logo span{color:var(--accent);}
+.nav-links{display:flex; gap:32px; list-style:none;}
+.nav-links button{background:none; border:0; cursor:pointer; font-weight:500; font-size:.95rem; color:var(--text-dim); position:relative; transition:color .25s; font-family:inherit;}
+.nav-links button::after{content:''; position:absolute; left:0; bottom:-6px; width:0; height:1.5px; background:var(--accent); transition:width .28s ease;}
+.nav-links button:hover{color:var(--text);}
+.nav-links button:hover::after{width:100%;}
+.nav-right{display:flex; align-items:center; gap:14px;}
+.cart-btn{position:relative; background:none; border:1px solid var(--line); color:var(--text); width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:.25s;}
+.cart-btn:hover{border-color:var(--accent); color:var(--accent);}
+.cart-count{position:absolute; top:-5px; right:-5px; background:var(--accent); color:#fff; font-size:.65rem; font-weight:700; min-width:17px; height:17px; border-radius:50%; display:flex; align-items:center; justify-content:center; padding:0 3px; transform:scale(0); transition:transform .25s cubic-bezier(.34,1.56,.64,1);}
+.cart-count.show{transform:scale(1);}
+.account-wrap{position:relative;}
+.account-btn{position:relative; background:none; border:1px solid var(--line); color:var(--text); width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:.25s;}
+.account-btn:hover{border-color:var(--accent); color:var(--accent);}
+.account-btn.active{border-color:var(--accent); color:var(--accent);}
+.account-tip{position:absolute; top:calc(100% + 10px); left:50%; transform:translateX(-50%) translateY(-4px); background:var(--bg-elev); border:1px solid var(--line); color:var(--text); font-size:.78rem; font-weight:600; padding:6px 12px; border-radius:8px; white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .22s ease,transform .22s ease; z-index:60;}
+.account-wrap:hover .account-tip{opacity:1; transform:translateX(-50%) translateY(0);}
+.account-panel{position:absolute; top:calc(100% + 12px); right:0; background:var(--bg-elev); border:1px solid var(--line); border-radius:14px; width:230px; box-shadow:0 20px 40px rgba(0,0,0,.5); padding:8px; opacity:0; transform:translateY(-8px) scale(.96); transform-origin:top right; pointer-events:none; transition:opacity .25s cubic-bezier(.2,.9,.25,1),transform .25s cubic-bezier(.2,.9,.25,1); z-index:60;}
+.account-panel.open{opacity:1; transform:translateY(0) scale(1); pointer-events:auto;}
+.account-panel-head{padding:10px 12px 12px; border-bottom:1px solid var(--line); margin-bottom:6px;}
+.account-panel-head .name{font-weight:700; font-size:.9rem;}
+.account-panel-head .mail{color:var(--text-faint); font-size:.75rem; margin-top:2px;}
+.account-panel button{display:block; width:100%; text-align:left; background:none; border:0; color:var(--text-dim); font-size:.88rem; font-weight:500; padding:10px 12px; border-radius:8px; cursor:pointer; transition:.2s; font-family:inherit;}
+.account-panel button:hover{background:rgba(124,92,255,.12); color:var(--text);}
+.account-panel button.danger:hover{background:rgba(255,107,107,.12); color:#ff8080;}
+@keyframes shakeErr{10%,90%{transform:translateX(-2px)} 20%,80%{transform:translateX(4px)} 30%,50%,70%{transform:translateX(-6px)} 40%,60%{transform:translateX(6px)}}
+.shake{animation:shakeErr .45s ease;}
+.auth-box{position:relative;}
+.auth-close{position:absolute; top:14px; right:14px; background:none; border:0; color:var(--text-dim); font-size:1.3rem; cursor:pointer; line-height:1; transition:color .2s; z-index:2;}
+.auth-close:hover{color:var(--text);}
+.auth-overlay .modal.closing{transform:translate(42vw,42vh) scale(.12); opacity:0; transition:transform .5s cubic-bezier(.5,0,.75,0),opacity .4s ease;}
+.auth-badge{position:fixed; bottom:24px; right:24px; z-index:90; background:var(--accent); color:#fff; border:0; padding:14px 22px; border-radius:100px; font-weight:600; font-size:.88rem; cursor:pointer; box-shadow:0 10px 30px rgba(124,92,255,.45); opacity:0; transform:scale(0); transition:opacity .3s ease,transform .3s cubic-bezier(.34,1.56,.64,1);}
+.auth-badge.show{opacity:1; transform:scale(1); animation:badgeBounce 2.4s ease-in-out .3s infinite;}
+@keyframes badgeBounce{0%,100%{transform:translateY(0)} 50%{transform:translateY(-9px)}}
+@media (prefers-reduced-motion:reduce){.auth-badge.show{animation:none}}
+.contact-row{display:flex; align-items:center; justify-content:space-between; gap:12px; background:var(--bg-card); border:1px solid var(--line); border-radius:12px; padding:14px 16px;}
+.contact-row span{font-weight:600; font-size:.92rem;}
+.legal-modal{max-width:680px;}
+.legal-updated{color:var(--text-faint); font-size:.8rem; margin:8px 0 18px;}
+.legal-content{color:var(--text-dim); font-size:.9rem; line-height:1.65;}
+.legal-content h3{color:var(--text); font-size:1.02rem; margin:22px 0 8px; font-family:'Unbounded';}
+.legal-content p{margin-bottom:10px;}
+.legal-content ul{margin:0 0 12px 20px;}
+.legal-content li{margin-bottom:4px;}
+.legal-content strong{color:var(--text);}
+.history-item{background:var(--bg-card); border:1px solid var(--line); border-radius:12px; padding:14px; margin-bottom:10px;}
+.history-item .h-date{font-size:.75rem; color:var(--text-faint); margin-bottom:6px;}
+.history-item .h-line{display:flex; justify-content:space-between; font-size:.85rem; color:var(--text-dim); margin-bottom:3px;}
+.history-item .h-total{display:flex; justify-content:space-between; font-weight:700; margin-top:8px; padding-top:8px; border-top:1px solid var(--line); font-family:'Unbounded'; font-size:.85rem;}
+.burger{display:none; flex-direction:column; gap:5px; background:none; border:0; cursor:pointer;}
+.burger span{width:22px; height:2px; background:var(--text);}
+.mobile-panel{display:none; flex-direction:column; border-top:1px solid var(--line);}
+.mobile-panel button{padding:16px 28px; border-bottom:1px solid var(--line); color:var(--text-dim); background:none; border-left:0;border-right:0;border-top:0; text-align:left; font-size:1rem; cursor:pointer;}
+.mobile-panel.open{display:flex;}
+
+.hero{min-height:100svh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; position:relative; padding:140px 24px 80px; overflow:hidden;}
+.hero::before{content:''; position:absolute; inset:0; background:
+  radial-gradient(ellipse 60% 45% at 50% 20%, var(--accent-soft), transparent 70%),
+  radial-gradient(ellipse 40% 30% at 80% 80%, rgba(63,230,196,.10), transparent 70%); pointer-events:none;}
+.eyebrow{color:var(--text-faint); font-size:.8rem; letter-spacing:.08em; margin-bottom:18px; font-weight:600;}
+.hero-title{font-family:'Unbounded'; font-weight:900; font-size:clamp(2.8rem,9.5vw,6.6rem); line-height:.98; color:#fdfdff;
+  text-shadow:1px 1px 0 rgba(124,92,255,.85),2px 2px 0 rgba(124,92,255,.65),3px 3px 0 rgba(124,92,255,.48),4px 4px 0 rgba(124,92,255,.32),6px 8px 24px rgba(124,92,255,.55),0 0 60px rgba(124,92,255,.35);
+  animation:glowpulse 4.5s ease-in-out infinite; cursor:default;}
+.hero-title .letter{display:inline-block; transition:transform .18s ease;}
+@keyframes glowpulse{0%,100%{filter:brightness(1)} 50%{filter:brightness(1.12)}}
+@media (prefers-reduced-motion:reduce){.hero-title{animation:none}}
+.hero-sub{margin-top:26px; max-width:480px; color:var(--text-dim); font-size:1.05rem;}
+.hero-cta{margin-top:40px; display:inline-flex; align-items:center; gap:10px; background:var(--accent); color:#fff; padding:14px 30px; border-radius:100px; font-weight:600; font-size:.95rem; transition:transform .2s,box-shadow .2s; border:0; cursor:pointer;}
+.hero-cta:hover{transform:translateY(-2px); box-shadow:0 12px 30px rgba(124,92,255,.35);}
+
+section.catalog{padding:100px 0;}
+.section-head{margin-bottom:30px;}
+.section-head h2{font-size:clamp(1.8rem,4vw,2.6rem); font-weight:700;}
+.section-head p{color:var(--text-dim); font-size:.95rem; max-width:420px; margin-top:8px;}
+.tabs{display:flex; gap:10px; margin-bottom:38px; flex-wrap:wrap;}
+.tab{background:var(--bg-card); border:1px solid var(--line); color:var(--text-dim); padding:10px 20px; border-radius:100px; font-size:.9rem; font-weight:600; cursor:pointer; transition:.25s;}
+.tab:hover{color:var(--text); border-color:rgba(124,92,255,.4);}
+.tab.active{background:var(--accent); border-color:var(--accent); color:#fff;}
+.grid-wrap{transition:opacity .3s ease, transform .3s ease;}
+.grid-wrap.swap{opacity:0; transform:translateX(-16px);}
+.grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:22px;}
+
+.card{background:var(--bg-card); border:1px solid var(--line); border-radius:18px; overflow:hidden; transition:transform .3s ease,border-color .3s ease,box-shadow .3s ease; display:flex; flex-direction:column; cursor:pointer;}
+.card:hover{transform:translateY(-6px); border-color:rgba(124,92,255,.45); box-shadow:0 20px 40px rgba(0,0,0,.45),0 0 30px rgba(124,92,255,.12);}
+.card.selected{border-color:var(--accent);}
+.card-media{aspect-ratio:4/3; position:relative; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#15151c,#1c1c26); overflow:hidden;}
+.card-media img{width:100%; height:100%; object-fit:cover;}
+.card-media::after{content:''; position:absolute; inset:0; background:radial-gradient(circle at 70% 20%,var(--accent-soft),transparent 60%); opacity:.8; transition:opacity .3s;}
+.card:hover .card-media::after{opacity:1;}
+.card-icon{font-size:2.6rem; opacity:.85; transition:transform .35s ease;}
+.card:hover .card-icon{transform:scale(1.08) rotate(-3deg);}
+.badge{position:absolute; top:12px; left:12px; font-size:.68rem; font-weight:700; letter-spacing:.03em; padding:5px 10px; border-radius:100px; background:rgba(0,0,0,.55); backdrop-filter:blur(4px); border:1px solid var(--line); z-index:2;}
+.badge.New{color:var(--teal); border-color:rgba(63,230,196,.4);}
+.badge.Popular{color:var(--amber); border-color:rgba(255,180,84,.4);}
+.badge.Featured{color:var(--accent); border-color:rgba(124,92,255,.5);}
+.card-body{padding:20px 20px 4px; display:flex; flex-direction:column; gap:8px;}
+.card-body h3{font-size:1.05rem; font-weight:600; font-family:'Manrope';}
+.card-body p{color:var(--text-dim); font-size:.88rem;}
+.card-foot{display:flex; align-items:center; justify-content:space-between; margin-top:4px;}
+.price{font-family:'Unbounded'; font-size:1rem; color:var(--accent);}
+.tap-hint{font-size:.72rem; color:var(--text-faint); transition:opacity .2s;}
+.card.selected .tap-hint{opacity:0;}
+.card-actions{display:flex; gap:8px; padding:0 20px; max-height:0; opacity:0; overflow:hidden; transition:max-height .32s ease,opacity .28s ease,padding .32s ease;}
+.card.selected .card-actions{max-height:60px; opacity:1; padding:14px 20px 20px;}
+.btn{flex:1; text-align:center; padding:10px 14px; border-radius:10px; font-size:.85rem; font-weight:600; cursor:pointer; border:1px solid var(--line); background:transparent; color:var(--text); transition:.2s;}
+.btn:hover{border-color:var(--accent); color:var(--accent);}
+.btn.primary{background:var(--accent); border-color:var(--accent); color:#fff;}
+.btn.primary:hover{filter:brightness(1.1); color:#fff;}
+
+.cta{padding:100px 0; text-align:center;}
+.cta h2{font-size:clamp(1.8rem,4.2vw,2.8rem); margin-bottom:16px;}
+.cta p{color:var(--text-dim); max-width:420px; margin:0 auto 30px;}
+footer{border-top:1px solid var(--line); padding:50px 0 30px;}
+.foot-top{display:flex; justify-content:space-between; flex-wrap:wrap; gap:30px; margin-bottom:30px;}
+.foot-links{display:flex; gap:26px; flex-wrap:wrap; color:var(--text-dim); font-size:.9rem;}
+.foot-links a:hover{color:var(--text);}
+.foot-bottom{color:var(--text-faint); font-size:.8rem;}
+
+.overlay{position:fixed; inset:0; background:rgba(4,4,6,.75); backdrop-filter:blur(6px); z-index:100; display:flex; align-items:center; justify-content:center; padding:20px; opacity:0; pointer-events:none; transition:opacity .3s ease;}
+.overlay.open{opacity:1; pointer-events:auto;}
+.modal{background:var(--bg-elev); border:1px solid var(--line); border-radius:20px; max-width:560px; width:100%; max-height:88vh; overflow:auto; padding:30px; transform:scale(.94); opacity:0; transition:transform .35s cubic-bezier(.2,.9,.25,1),opacity .3s ease;}
+.overlay.open .modal{transform:scale(1); opacity:1;}
+.modal-close{float:right; background:none; border:0; color:var(--text-dim); font-size:1.4rem; cursor:pointer; line-height:1;}
+
+.pv-modal{max-width:820px;}
+.pv-image{aspect-ratio:16/9; border-radius:14px; background:linear-gradient(135deg,#15151c,#1c1c26); display:flex; align-items:center; justify-content:center; overflow:hidden; margin-top:6px; position:relative;}
+.pv-image img{width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .35s ease;}
+.pv-image img.show{opacity:1;}
+.pv-icon{font-size:4.5rem; opacity:.85;}
+.pv-arrows{display:flex; justify-content:center; gap:16px; margin-top:16px;}
+.pv-arrows button{background:var(--bg-card); border:1px solid var(--line); color:var(--text); width:42px; height:42px; border-radius:50%; cursor:pointer; font-size:1.1rem; transition:.2s;}
+.pv-arrows button:hover{border-color:var(--accent); color:var(--accent);}
+.pv-info{margin-top:20px;}
+.pv-info p{color:var(--text-dim); margin-top:8px;}
+.pv-foot{display:flex; align-items:center; justify-content:space-between; margin-top:20px; gap:14px; flex-wrap:wrap;}
+.pv-foot .price{font-size:1.3rem;}
+.pv-btns{display:flex; gap:10px;}
+.pv-btns .btn{flex:none; padding:10px 20px;}
+
+.cart-overlay{justify-content:flex-end; padding:0;}
+.cart-drawer{background:var(--bg-elev); border-left:1px solid var(--line); width:min(400px,100vw); height:100%; padding:24px; display:flex; flex-direction:column; transform:translateX(100%); transition:transform .35s cubic-bezier(.2,.9,.25,1); overflow:auto;}
+.cart-overlay.open .cart-drawer{transform:translateX(0);}
+.cart-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;}
+.cart-items{flex:1; display:flex; flex-direction:column; gap:14px;}
+.cart-item{display:flex; gap:12px; align-items:center; background:var(--bg-card); border:1px solid var(--line); border-radius:12px; padding:10px; animation:cartIn .3s ease;}
+@keyframes cartIn{from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)}}
+.cart-item .ci-icon{width:48px; height:48px; border-radius:8px; background:linear-gradient(135deg,#15151c,#1c1c26); display:flex; align-items:center; justify-content:center; font-size:1.3rem; flex-shrink:0; overflow:hidden;}
+.cart-item .ci-icon img{width:100%; height:100%; object-fit:cover;}
+.ci-info{flex:1; min-width:0;}
+.ci-info h4{font-size:.9rem; font-weight:600;}
+.ci-info .price{font-size:.85rem;}
+.ci-qty{display:flex; align-items:center; gap:8px;}
+.ci-qty button{width:24px; height:24px; border-radius:6px; border:1px solid var(--line); background:none; color:var(--text); cursor:pointer;}
+.ci-remove{background:none; border:0; color:var(--text-faint); cursor:pointer; font-size:1.1rem;}
+.ci-remove:hover{color:#ff6b6b;}
+.cart-empty{color:var(--text-faint); font-size:.9rem; text-align:center; padding:40px 0;}
+.cart-foot{border-top:1px solid var(--line); padding-top:16px; margin-top:16px;}
+.cart-total{display:flex; justify-content:space-between; font-weight:700; margin-bottom:14px; font-family:'Unbounded'; font-size:1rem;}
+
+.auth-box{max-width:400px; text-align:center;}
+.auth-view h2{font-size:1.6rem; margin-bottom:8px;}
+.auth-view>p{color:var(--text-dim); font-size:.9rem; margin-bottom:22px;}
+.auth-note{background:rgba(124,92,255,.1); border:1px solid rgba(124,92,255,.3); border-radius:10px; padding:12px; font-size:.82rem; color:var(--text-dim); margin-bottom:20px;}
+.social{width:100%; margin-bottom:10px; padding:12px; display:flex; align-items:center; justify-content:center; gap:10px; font-weight:600;}
+.guest-link{display:block; width:100%; background:none; border:0; color:var(--text-faint); font-size:.85rem; margin-top:14px; cursor:pointer; text-decoration:underline;}
+.guest-link:hover{color:var(--text-dim);}
+.back-link{background:none; border:0; color:var(--text-faint); font-size:.85rem; cursor:pointer; margin-bottom:14px; text-align:left;}
+.auth-view input{width:100%; background:var(--bg-card); border:1px solid var(--line); color:var(--text); border-radius:10px; padding:12px 14px; font-size:.9rem; margin-bottom:12px; font-family:inherit;}
+.switch-line{margin-top:16px; font-size:.85rem; color:var(--text-dim);}
+.switch-line a{color:var(--accent); font-weight:600;}
+#authEmail{display:none;}
+
+.toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--bg-elev); border:1px solid var(--accent); color:var(--text); padding:14px 22px; border-radius:12px; font-size:.9rem; z-index:200; opacity:0; transition:.3s; pointer-events:none;}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+@media(max-width:760px){
+  .nav-links{display:none;} .burger{display:flex;}
+  .foot-top{flex-direction:column;}
+  .pv-foot{flex-direction:column; align-items:stretch;}
+  .pv-btns{width:100%;} .pv-btns .btn{flex:1;}
+  .cart-drawer{width:100vw;}
+  .account-panel{width:min(230px,78vw);}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div class="logo">Noxee<span>CWW</span></div>
+    <ul class="nav-links">
+      <li><button data-nav="home">Home</button></li>
+      <li><button data-nav="quality">Quality</button></li>
+      <li><button data-nav="effects">Effects</button></li>
+      <li><button data-nav="packs">Packs</button></li>
+    </ul>
+    <div class="nav-right">
+      <div class="account-wrap" id="accountWrap">
+        <button class="account-btn" id="accountBtn" aria-label="Account">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="19" height="19"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        </button>
+        <span class="account-tip" id="accountTip">Account</span>
+        <div class="account-panel" id="accountPanel">
+          <div class="account-panel-head"><div class="name" id="panelName">Guest</div><div class="mail" id="panelMail"></div></div>
+          <button id="btnHistory">Purchase History</button>
+          <button id="btnSwitch">Switch Account</button>
+          <button class="danger" id="btnLogout">Log Out</button>
+        </div>
+      </div>
+      <button class="cart-btn" id="cartBtn" aria-label="Open cart">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="19" height="19"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+      <button class="burger" id="burgerBtn"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+  <div class="mobile-panel" id="mobilePanel">
+    <button data-nav="home">Home</button><button data-nav="quality">Quality</button><button data-nav="effects">Effects</button><button data-nav="packs">Packs</button>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <div class="eyebrow">NOXEECWW · DIGITAL PRESETS & EFFECTS</div>
+  <h1 class="hero-title" id="heroTitle">My Presets!</h1>
+  <p class="hero-sub">Cinematic CC, presets and effects designed for creators who edit at the next level.</p>
+  <button class="hero-cta" data-nav="quality">View catalog ↓</button>
+</section>
+
+<section class="catalog" id="catalog">
+  <div class="wrap">
+    <div class="tabs">
+      <button class="tab" data-tab="quality">Quality</button>
+      <button class="tab" data-tab="effects">Effects</button>
+      <button class="tab" data-tab="packs">Packs</button>
+    </div>
+    <div class="section-head" id="sectionHead"></div>
+    <div class="grid-wrap" id="gridWrap"><div class="grid" id="grid"></div></div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap">
+    <h2>Take your editing to the next level</h2>
+    <p>New presets and effects every month. Join the NoxeeCWW community.</p>
+    <button class="hero-cta" data-nav="packs">Explore products</button>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="logo">Noxee<span>CWW</span></div>
+      <div class="foot-links">
+        <a href="https://www.youtube.com/@NoxeeCWW" target="_blank" rel="noopener">YouTube</a>
+        <a href="https://www.tiktok.com/@noxeecww" target="_blank" rel="noopener">TikTok</a>
+        <a href="#" data-open="contactOverlay">Contact</a><a href="#" data-open="termsOverlay">Terms</a><a href="#" data-open="privacyOverlay">Privacy</a>
+      </div>
+    </div>
+    <div class="foot-bottom"><span>© NoxeeCWW. All rights reserved.</span></div>
+  </div>
+</footer>
+
+<!-- Product view -->
+<div class="overlay" id="pvOverlay">
+  <div class="modal pv-modal">
+    <button class="modal-close" id="pvClose">×</button>
+    <div class="pv-image" id="pvImage"></div>
+    <div class="pv-arrows"><button id="pvPrev">←</button><button id="pvNext">→</button></div>
+    <div class="pv-info">
+      <h2 id="pvName"></h2><p id="pvDesc"></p>
+      <div class="pv-foot"><span class="price" id="pvPrice"></span>
+        <div class="pv-btns"><button class="btn" id="pvCart">Add to Cart</button><button class="btn primary" id="pvBuy">Buy Now</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Cart -->
+<div class="overlay cart-overlay" id="cartOverlay">
+  <aside class="cart-drawer">
+    <div class="cart-head"><h3>Your Cart</h3><button class="modal-close" id="cartClose">×</button></div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-foot">
+      <div class="cart-total">Total <span id="cartTotal">$0.00</span></div>
+      <button class="btn primary" style="width:100%" id="checkoutBtn">Proceed to Checkout</button>
+    </div>
+  </aside>
+</div>
+
+<!-- Auth -->
+<div class="overlay auth-overlay" id="authOverlay">
+  <div class="modal auth-box">
+    <button class="auth-close" id="authClose">×</button>
+    <div class="auth-view" id="authWelcome">
+      <h2>Welcome!</h2>
+      <p id="authWelcomeSub">Sign in to unlock purchases, or browse the store as a guest.</p>
+      <button class="btn social" data-social="Google">Continue with Google</button>
+      <button class="btn social" data-social="Apple">Continue with Apple</button>
+      <button class="btn" id="showEmail">Continue with Email</button>
+      <button class="guest-link" id="guestBtn">Continue as Guest</button>
+    </div>
+    <div class="auth-view" id="authEmail">
+      <button class="back-link" id="authBack">← Back</button>
+      <h2 id="authEmailTitle">Sign in</h2>
+      <input type="email" id="emailInput" placeholder="Email">
+      <input type="password" id="passInput" placeholder="Password">
+      <button class="btn primary" style="width:100%" id="emailContinue">Continue</button>
+      <p class="switch-line" id="switchLine">Don't have an account? <a href="#" id="toggleMode">Register</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- Purchase history -->
+<div class="overlay" id="historyOverlay">
+  <div class="modal">
+    <button class="modal-close" id="historyClose">×</button>
+    <h2>Purchase History</h2>
+    <div id="historyList" style="margin-top:16px;"></div>
+  </div>
+</div>
+
+<button class="auth-badge" id="authBadge" hidden>Sign In / Sign Up</button>
+
+<!-- Contact -->
+<div class="overlay" id="contactOverlay">
+  <div class="modal">
+    <button class="modal-close" id="contactClose">×</button>
+    <h2>Contact Us</h2>
+    <p style="color:var(--text-dim);margin:10px 0 18px;font-size:.9rem;">Have a question? Reach out anytime — copy our email below.</p>
+    <div class="contact-row"><span id="contactEmail">noxeecww@gmail.com</span><button class="btn primary" id="copyEmailBtn">Copy</button></div>
+  </div>
+</div>
+
+<!-- Terms -->
+<div class="overlay" id="termsOverlay">
+  <div class="modal legal-modal">
+    <button class="modal-close" id="termsClose">×</button>
+    <h2>Terms &amp; Conditions</h2>
+    <div class="legal-updated">Last Updated: September 22, 2026</div>
+    <div class="legal-content">
+      <p>Welcome to <strong>NoxeeCWW</strong>. These Terms &amp; Conditions ("Terms") govern your access to and use of the NoxeeCWW website and your purchase and use of digital products offered through the store.</p>
+      <p>By accessing this website, creating an account, placing an order, or purchasing any product from NoxeeCWW, you acknowledge that you have read, understood, and agreed to these Terms.</p>
+      <p>If you do not agree with these Terms, please do not use this website or purchase any products.</p>
+      <h3>1. About NoxeeCWW</h3>
+      <p>NoxeeCWW is a digital store operated under the NoxeeCWW brand, offering digital editing products for video creators and editors. Products available through the store may include, but are not limited to:</p>
+      <ul><li>Color correction presets and CCs</li><li>Editing presets</li><li>Effects</li><li>Shake and motion settings</li><li>Warp settings</li><li>Time-remapping settings</li><li>Zoom settings</li><li>Topaz settings</li><li>Product packs and bundles</li><li>Other digital editing resources</li></ul>
+      <p>All products sold through NoxeeCWW are digital products unless explicitly stated otherwise.</p>
+      <h3>2. Digital Products</h3>
+      <p>NoxeeCWW products are digital files, presets, settings, or other digital resources intended to assist users with video editing and content creation. Because these products are digital, no physical item will be shipped to you unless specifically stated otherwise.</p>
+      <p>Product descriptions, previews, images, and demonstrations are provided to help you understand what each product contains. Results may vary depending on your editing software, footage, hardware, settings, workflow, and other factors. NoxeeCWW does not guarantee that a particular product will produce identical results for every user.</p>
+      <h3>3. License and Permitted Use</h3>
+      <p>When you purchase a NoxeeCWW product, you receive a <strong>limited, non-exclusive, non-transferable license</strong> to use the purchased product for your own personal or commercial creative work, subject to these Terms.</p>
+      <p>You may use the purchased products in videos, edits, projects, social media content, YouTube videos, films, advertisements, or other creative works that you create. Unless expressly authorized by NoxeeCWW, purchasing a product does not transfer ownership or copyright of the product to you.</p>
+      <h3>4. Prohibited Uses</h3>
+      <p>You may not:</p>
+      <ul><li>Resell, redistribute, sublicense, or share the original digital files.</li><li>Upload the products to file-sharing websites, cloud storage intended for public distribution, marketplaces, forums, or similar platforms.</li><li>Give purchased products to other people.</li><li>Claim the products as your own original work.</li><li>Modify and redistribute the products as standalone products.</li><li>Include the original files in another product that is sold, distributed, or shared.</li><li>Use the products to create a competing preset, effects, or editing-product store.</li><li>Circumvent, disable, or attempt to bypass any security or access controls associated with the products.</li><li>Share your account credentials for the purpose of allowing another person to access purchased products.</li></ul>
+      <p>You are responsible for ensuring that your use of the products complies with these Terms.</p>
+      <h3>5. Personal and Commercial Projects</h3>
+      <p>Unless a product description states otherwise, purchased NoxeeCWW products may be used in both personal and commercial creative projects — for example, in a YouTube video, social media video, client project, advertisement, music video, or other finished creative work. However, the underlying NoxeeCWW product itself may not be sold, distributed, or provided to another person as a standalone digital resource.</p>
+      <h3>6. Purchases and Pricing</h3>
+      <p>All product prices displayed on the website are shown in <strong>United States Dollars (USD)</strong> unless otherwise indicated. NoxeeCWW reserves the right to change product prices, introduce discounts, create bundles, modify products, or discontinue products at any time. A price change will not affect an order that has already been successfully completed.</p>
+      <p>NoxeeCWW may offer promotional codes, discounts, or special offers. Unless otherwise stated, promotions cannot be combined and may be subject to additional conditions.</p>
+      <h3>7. Payments</h3>
+      <p>Payments may be processed through third-party payment providers. By completing a purchase, you authorize the applicable payment provider to process the payment for the amount shown at checkout. NoxeeCWW does not intentionally store complete payment card numbers or other sensitive payment credentials on its own website when payment processing is handled by a third-party payment provider.</p>
+      <p>Payment providers may have their own terms, privacy policies, fees, and requirements. You are responsible for reviewing the applicable terms of the payment provider you use.</p>
+      <h3>8. Orders</h3>
+      <p>An order is considered completed once the applicable payment provider successfully confirms the transaction and the purchase is accepted by NoxeeCWW. NoxeeCWW reserves the right to cancel or refuse an order in circumstances including, but not limited to:</p>
+      <ul><li>Suspected fraud or unauthorized payment activity.</li><li>Payment failure or reversal.</li><li>Abuse of promotional offers.</li><li>Violation of these Terms.</li><li>Technical errors affecting product availability or pricing.</li></ul>
+      <p>If an order is canceled after payment has been successfully processed, any applicable refund will be handled according to the refund policy and the circumstances of the cancellation.</p>
+      <h3>9. Refunds</h3>
+      <p>Because NoxeeCWW sells digital products, <strong>all sales are generally final once the digital product has been delivered or access to the product has been provided</strong>, except where a refund is required by applicable law or where NoxeeCWW expressly approves a refund.</p>
+      <p>If you experience a technical problem, receive an incorrect product, receive a corrupted or unusable file, or encounter another legitimate issue with your purchase, please contact NoxeeCWW before initiating a payment dispute. NoxeeCWW may request reasonable information necessary to verify the purchase and investigate the issue. Nothing in this section is intended to limit any mandatory consumer rights that may apply under the laws of your country or jurisdiction.</p>
+      <h3>10. Chargebacks and Payment Disputes</h3>
+      <p>Before initiating a chargeback or payment dispute, you agree to contact NoxeeCWW and provide an opportunity to investigate and resolve the issue. Unauthorized chargebacks or fraudulent payment disputes may result in the suspension or termination of the associated account and the restriction of future purchases, subject to applicable law.</p>
+      <h3>11. Account Registration</h3>
+      <p>Certain features of the website may require you to create an account. You are responsible for:</p>
+      <ul><li>Providing accurate information.</li><li>Keeping your login credentials secure.</li><li>Not sharing your account with unauthorized individuals.</li><li>Not allowing another person to use your account to access purchased products.</li></ul>
+      <p>You are responsible for activity conducted through your account unless you can demonstrate that the activity occurred without your authorization and despite reasonable security measures. NoxeeCWW reserves the right to suspend or terminate accounts that violate these Terms.</p>
+      <h3>12. Account and Purchase History</h3>
+      <p>The website may provide features that allow registered users to view information associated with their account, including purchase history. Purchase history displayed through the website is provided for convenience and may depend on the information stored by the website and its systems. NoxeeCWW does not guarantee that purchase history will always be available or error-free.</p>
+      <h3>13. Intellectual Property</h3>
+      <p>The NoxeeCWW brand, website design, logos, graphics, product names, descriptions, original digital products, and other content made available by NoxeeCWW are protected by applicable intellectual property laws. Unless expressly stated otherwise, all rights not expressly granted to you under these Terms are reserved by NoxeeCWW and/or the applicable rights holder. Purchasing a digital product does not give you ownership of NoxeeCWW's trademarks, branding, website content, or underlying product files.</p>
+      <h3>14. Third-Party Software</h3>
+      <p>Some NoxeeCWW products may be designed for use with third-party editing software, plugins, applications, or services. NoxeeCWW does not own or control third-party software and is not responsible for changes, updates, compatibility issues, discontinued features, licensing requirements, or other issues caused by third-party software. You are responsible for maintaining any required software, plugins, subscriptions, licenses, or compatible versions necessary to use a purchased product.</p>
+      <h3>15. Product Updates</h3>
+      <p>NoxeeCWW may update, modify, improve, replace, or discontinue products at its discretion. Unless explicitly stated otherwise on the product page, purchasing a product does not guarantee unlimited future updates or lifetime support. If a product includes updates, the applicable update terms will be communicated on the relevant product page or at the time of purchase.</p>
+      <h3>16. Website Availability</h3>
+      <p>NoxeeCWW aims to keep the website available and functional, but uninterrupted access cannot be guaranteed. The website may occasionally be unavailable due to:</p>
+      <ul><li>Maintenance.</li><li>Technical issues.</li><li>Server problems.</li><li>Security incidents.</li><li>Third-party service interruptions.</li><li>Internet or network failures.</li><li>Circumstances beyond NoxeeCWW's reasonable control.</li></ul>
+      <p>NoxeeCWW is not responsible for losses caused solely by temporary website unavailability, to the extent permitted by applicable law.</p>
+      <h3>17. Disclaimer</h3>
+      <p>The website and its products are provided on an "as is" and "as available" basis to the extent permitted by applicable law. NoxeeCWW does not guarantee that:</p>
+      <ul><li>The website will always operate without interruption.</li><li>Products will be compatible with every computer, operating system, editing application, plugin, or software version.</li><li>Products will produce a specific creative or technical result.</li><li>The website or downloaded files will always be completely free from technical errors.</li></ul>
+      <p>Nothing in these Terms excludes rights or guarantees that cannot legally be excluded under applicable law.</p>
+      <h3>18. Limitation of Liability</h3>
+      <p>To the maximum extent permitted by applicable law, NoxeeCWW will not be liable for indirect, incidental, special, consequential, or similar damages arising from the use of the website or digital products. This may include loss of data, loss of profits, loss of business opportunities, or interruption of business activities. Nothing in these Terms excludes or limits liability where such exclusion or limitation is prohibited by applicable law.</p>
+      <h3>19. Prohibited Activities</h3>
+      <p>You agree not to use the website or NoxeeCWW products for unlawful purposes or in a manner that violates these Terms. You must not attempt to:</p>
+      <ul><li>Gain unauthorized access to the website or its systems.</li><li>Interfere with the operation of the website.</li><li>Exploit vulnerabilities for malicious purposes.</li><li>Circumvent technical restrictions.</li><li>Use fraudulent payment methods.</li><li>Abuse the account or purchase system.</li><li>Distribute stolen or unauthorized copies of NoxeeCWW products.</li></ul>
+      <p>NoxeeCWW reserves the right to take appropriate action against violations of these Terms.</p>
+      <h3>20. Termination</h3>
+      <p>NoxeeCWW may suspend or terminate access to an account where there is reasonable evidence of fraud, abuse, unauthorized distribution, piracy, account sharing, or other violations of these Terms. Termination of an account does not automatically cancel obligations that arose before termination. Any licenses granted to you may be terminated where permitted by law if you materially violate these Terms.</p>
+      <h3>21. Changes to These Terms</h3>
+      <p>NoxeeCWW may update these Terms from time to time. When changes are made, the "Last Updated" date at the top of this page may be updated. Your continued use of the website after updated Terms are published constitutes acceptance of the revised Terms, to the extent permitted by applicable law.</p>
+      <h3>22. Privacy</h3>
+      <p>Your use of NoxeeCWW may involve the collection and processing of certain information, including information necessary to create an account, process purchases, maintain purchase records, or provide website functionality. The handling of personal information is governed by the NoxeeCWW Privacy Policy.</p>
+      <h3>23. Governing Law</h3>
+      <p>These Terms shall be interpreted and applied in accordance with the laws applicable to NoxeeCWW, without prejudice to any mandatory consumer protection rights that may apply to you under the laws of your country or jurisdiction. Where applicable law grants consumers mandatory rights that cannot be waived by contract, those rights remain unaffected by these Terms.</p>
+      <h3>24. Contact</h3>
+      <p>If you have questions about these Terms, your order, a digital product, or a technical issue, please contact NoxeeCWW through the contact method provided on the website. When contacting NoxeeCWW regarding an order, please include relevant information such as your order details and the email address associated with your purchase.</p>
+      <h3>25. Acceptance</h3>
+      <p>By using the NoxeeCWW website or purchasing a NoxeeCWW product, you acknowledge that you have read and understood these Terms &amp; Conditions and agree to be bound by them.</p>
+      <p><strong>NoxeeCWW — All Rights Reserved.</strong></p>
+      <button class="btn primary" style="width:100%;margin-top:6px;" id="termsContinue">Continue</button>
+    </div>
+  </div>
+</div>
+
+<!-- Privacy -->
+<div class="overlay" id="privacyOverlay">
+  <div class="modal legal-modal">
+    <button class="modal-close" id="privacyClose">×</button>
+    <h2>Privacy Policy</h2>
+    <div class="legal-updated">Last Updated: September 22, 2026</div>
+    <div class="legal-content">
+      <p>NoxeeCWW ("NoxeeCWW", "we", "us", or "our") respects your privacy and is committed to protecting the information you provide when using our website and purchasing our digital products. This Privacy Policy explains what information may be collected, how it may be used, and how it may be protected when you visit or use the NoxeeCWW website.</p>
+      <h3>1. Information We Collect</h3>
+      <p>When you use our website, create an account, place an order, or contact us, we may collect information such as:</p>
+      <ul><li>Name or username.</li><li>Email address.</li><li>Account login information.</li><li>Purchase and order information.</li><li>Products purchased.</li><li>Information you voluntarily provide when contacting us.</li><li>Technical information related to your use of the website, such as browser type, device information, and basic usage data.</li></ul>
+      <p>We only request information that is reasonably necessary to operate the website, provide our products, process purchases, maintain accounts, and provide customer support.</p>
+      <h3>2. Payment Information</h3>
+      <p>Payments may be processed through third-party payment providers. NoxeeCWW does not intentionally store complete credit card numbers, security codes, or other sensitive payment credentials on its own website servers. Payment information may be collected and processed directly by the payment provider according to its own privacy policy and terms.</p>
+      <h3>3. How We Use Your Information</h3>
+      <p>Information collected through the website may be used to:</p>
+      <ul><li>Create and manage your account.</li><li>Process and manage purchases.</li><li>Provide access to purchased digital products.</li><li>Maintain purchase history.</li><li>Respond to customer support requests.</li><li>Communicate with you regarding your orders or account.</li><li>Improve the website and user experience.</li><li>Detect, investigate, and prevent fraud, abuse, or unauthorized activity.</li><li>Comply with applicable legal obligations.</li></ul>
+      <p>We do not use your information for purposes unrelated to the operation of NoxeeCWW unless permitted or required by applicable law or you have provided appropriate consent.</p>
+      <h3>4. Account Information</h3>
+      <p>If you create an account, certain information may be stored in order to maintain your account and purchase history. You are responsible for keeping your account credentials confidential and for activity performed through your account.</p>
+      <h3>5. Cookies and Similar Technologies</h3>
+      <p>The website may use cookies, local storage, or similar technologies to maintain certain website functionality, remember preferences, manage sessions, and improve the user experience. Third-party services used by the website may also use cookies or similar technologies according to their own policies. You may be able to control cookies through your browser settings. Disabling certain technologies may affect some website functionality.</p>
+      <h3>6. Third-Party Services</h3>
+      <p>NoxeeCWW may use third-party services to provide certain functions, including payment processing, hosting, analytics, website functionality, or other services necessary to operate the website. These third parties may process information according to their own privacy policies and terms. NoxeeCWW is not responsible for the privacy practices of independent third-party services.</p>
+      <h3>7. Data Security</h3>
+      <p>We take reasonable measures to protect information associated with the website. However, no website, online service, or method of electronic transmission can be guaranteed to be completely secure. Therefore, we cannot guarantee absolute security of information transmitted through the Internet.</p>
+      <h3>8. Data Retention</h3>
+      <p>We may retain information for as long as reasonably necessary to provide our services, maintain records of purchases, resolve disputes, enforce agreements, prevent fraud, and comply with legal obligations. When information is no longer reasonably necessary for these purposes, it may be deleted or anonymized where appropriate.</p>
+      <h3>9. Your Privacy Rights</h3>
+      <p>Depending on your location and applicable law, you may have rights concerning your personal information, including rights to:</p>
+      <ul><li>Request access to information associated with you.</li><li>Request correction of inaccurate information.</li><li>Request deletion of certain information.</li><li>Object to or restrict certain processing.</li><li>Request a copy of certain information.</li></ul>
+      <p>To make a privacy-related request, contact us using the contact information provided below. We may need to verify your identity before processing certain requests.</p>
+      <h3>10. Children's Privacy</h3>
+      <p>NoxeeCWW is not intended to knowingly collect personal information from children in violation of applicable law. If you believe that a child has provided personal information to us without appropriate authorization, please contact us so that we can review and address the situation.</p>
+      <h3>11. International Users</h3>
+      <p>Because NoxeeCWW may be accessible from different countries, information may be processed or stored in locations different from your country of residence. By using the website, you acknowledge that such processing may occur, subject to applicable privacy laws.</p>
+      <h3>12. Changes to This Privacy Policy</h3>
+      <p>We may update this Privacy Policy from time to time. When changes are made, the updated version will be posted on the website with a revised "Last Updated" date. Your continued use of the website after an updated Privacy Policy becomes available constitutes your acknowledgment of the updated policy, to the extent permitted by applicable law.</p>
+      <h3>13. Contact</h3>
+      <p>If you have questions or requests concerning this Privacy Policy, please contact:</p>
+      <p><strong>NoxeeCWW</strong><br>Email: noxeecww@gmail.com<br>Website: NoxeeCWW.com</p>
+      <p><strong>NoxeeCWW — All Rights Reserved.</strong></p>
+      <button class="btn primary" style="width:100%;margin-top:6px;" id="privacyContinue">Continue</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ PRODUCT DATA — edit names, prices, images & descriptions here ============ */
+const PRODUCTS=[
+ {id:1,name:"Noxee's Colorfull CC",cat:'quality',price:3.99,icon:'🎨',badge:'',desc:'Vivid, colorful correction for creative edits.',main:'',ref1:'',ref2:''},
+ {id:2,name:"Noxee's Dark CC",cat:'quality',price:3.99,icon:'🌑',badge:'',desc:'Deep, moody dark-tone color correction.',main:'',ref1:'',ref2:''},
+ {id:3,name:"Noxee's Main CC",cat:'quality',price:4.99,icon:'🎬',badge:'Featured',desc:"Noxee's signature cinematic color correction.",main:'',ref1:'',ref2:''},
+ {id:4,name:"Noxee's Main Topaz Settings",cat:'quality',price:3.99,icon:'✦',badge:'New',desc:'Topaz-based sharpening and clarity settings.',main:'',ref1:'',ref2:''},
+ {id:5,name:"Noxee's Main Twitch Shake",cat:'effects',price:2.99,icon:'⚡',badge:'',desc:'Twitch-style camera shake for impact.',main:'',ref1:'',ref2:''},
+ {id:6,name:"Noxee's Main Warp Settings",cat:'effects',price:1.99,icon:'🌀',badge:'',desc:'Warp-driven distortion motion settings.',main:'',ref1:'',ref2:''},
+ {id:7,name:"Noxee's Soft Shake",cat:'effects',price:2.99,icon:'💧',badge:'',desc:'Subtle handheld shake for realism.',main:'',ref1:'',ref2:''},
+ {id:8,name:"Noxee's Slide Watermark",cat:'effects',price:1.99,icon:'🔖',badge:'',desc:'Sliding animated watermark overlay.',main:'',ref1:'',ref2:''},
+ {id:9,name:"Noxee's Microwave Time Remap",cat:'effects',price:2.99,icon:'⏱',badge:'',desc:'Time-remap settings for microwave transitions.',main:'',ref1:'',ref2:''},
+ {id:10,name:"Noxee's Microwave Zooms",cat:'effects',price:3.99,icon:'🔍',badge:'Popular',desc:'Dynamic zoom settings for microwave edits.',main:'',ref1:'',ref2:''},
+ {id:11,name:"Noxee's CC Pack",cat:'packs',price:9.99,icon:'🎬',badge:'Featured',desc:'All CC presets bundled together.',main:'',ref1:'',ref2:''},
+ {id:12,name:"Noxee's Quality Method",cat:'packs',price:5.99,icon:'🔆',badge:'',desc:'Complete quality-focused editing method.',main:'',ref1:'',ref2:''},
+ {id:13,name:"Noxee's Effects Pack",cat:'packs',price:13.99,icon:'⚡',badge:'Featured',desc:'Every effect preset in one bundle.',main:'',ref1:'',ref2:''},
+];
+const SECTIONS={
+  quality:{title:'Quality',sub:'Color correction and clarity presets, crafted for cinematic footage.'},
+  effects:{title:'Effects',sub:'Shake, warp, remap and zoom — effects built to push your edits further.'},
+  packs:{title:'Packs',sub:'Bundled collections — the fastest way to get the full Noxee toolkit.'}
+};
+/* ======================================================================================= */
+
+let cart=JSON.parse(localStorage.getItem('noxee_cart')||'[]');
+let ACCOUNTS=JSON.parse(localStorage.getItem('noxee_accounts')||'{}');
+let user=null, isGuest=false, activeTab='quality', pvProduct=null, pvIndex=0, authMode='login', authMethod='Email', authRegistering=false;
+
+function money(n){return '$'+n.toFixed(2);}
+function saveCart(){try{localStorage.setItem('noxee_cart',JSON.stringify(cart));}catch(e){}}
+function saveAccounts(){try{localStorage.setItem('noxee_accounts',JSON.stringify(ACCOUNTS));}catch(e){}}
+function addOrder(items,total){
+  if(!user) return;
+  const acc=ACCOUNTS[user.email]; if(!acc) return;
+  acc.orders=acc.orders||[];
+  acc.orders.unshift({date:new Date().toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}),items,total});
+  saveAccounts(); user.orders=acc.orders;
+}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window._tt);window._tt=setTimeout(()=>t.classList.remove('show'),2800);}
+
+function mediaHTML(p,large){
+  if(p.main) return `<img src="${p.main}" alt="${p.name}">`;
+  return `<span class="${large?'pv-icon':'card-icon'}">${p.icon}</span>`;
+}
+function cardHTML(p){
+  const badge=p.badge?`<span class="badge ${p.badge}">${p.badge}</span>`:'';
+  return `<div class="card" data-id="${p.id}">
+    <div class="card-media" data-view>${badge}${mediaHTML(p,false)}</div>
+    <div class="card-body"><h3>${p.name}</h3><p>${p.desc}</p>
+      <div class="card-foot"><span class="price">${money(p.price)}</span><span class="tap-hint">Tap for options</span></div>
+    </div>
+    <div class="card-actions">
+      <button class="btn" data-cart>Add to Cart</button>
+      <button class="btn primary" data-buy>Buy Now</button>
+    </div>
+  </div>`;
+}
+function renderGrid(){
+  const list=PRODUCTS.filter(p=>p.cat===activeTab);
+  document.getElementById('grid').innerHTML=list.map(cardHTML).join('');
+  document.getElementById('sectionHead').innerHTML=`<h2>${SECTIONS[activeTab].title}</h2><p>${SECTIONS[activeTab].sub}</p>`;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===activeTab));
+}
+function switchTab(cat){
+  if(cat===activeTab) return;
+  const wrap=document.getElementById('gridWrap');
+  wrap.classList.add('swap');
+  setTimeout(()=>{ activeTab=cat; renderGrid(); wrap.classList.remove('swap'); },220);
+}
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>switchTab(t.dataset.tab)));
+
+document.querySelectorAll('[data-nav]').forEach(el=>el.addEventListener('click',()=>{
+  const n=el.dataset.nav;
+  document.getElementById('mobilePanel').classList.remove('open');
+  if(n==='home'){ document.getElementById('top').scrollIntoView({behavior:'smooth'}); return; }
+  if(n!==activeTab) switchTab(n);
+  document.getElementById('catalog').scrollIntoView({behavior:'smooth'});
+}));
+document.getElementById('burgerBtn').addEventListener('click',()=>document.getElementById('mobilePanel').classList.toggle('open'));
+
+/* Card interactions: click card = select, click image = product view, buttons = cart/buy */
+document.getElementById('grid').addEventListener('click',e=>{
+  const cardEl=e.target.closest('.card'); if(!cardEl) return;
+  const id=Number(cardEl.dataset.id);
+  if(e.target.closest('[data-view]')){ openPV(id); return; }
+  if(e.target.closest('[data-cart]')){ e.stopPropagation(); addToCart(id); return; }
+  if(e.target.closest('[data-buy]')){ e.stopPropagation(); buyNow(id); return; }
+  document.querySelectorAll('.card.selected').forEach(c=>{if(c!==cardEl)c.classList.remove('selected');});
+  cardEl.classList.toggle('selected');
+});
+
+/* Product view */
+function openPV(id){
+  pvProduct=PRODUCTS.find(p=>p.id===id); pvIndex=0;
+  document.getElementById('pvName').textContent=pvProduct.name;
+  document.getElementById('pvDesc').textContent=pvProduct.desc;
+  document.getElementById('pvPrice').textContent=money(pvProduct.price);
+  renderPVImage();
+  document.getElementById('pvOverlay').classList.add('open');
+}
+function renderPVImage(){
+  const imgs=[pvProduct.main,pvProduct.ref1,pvProduct.ref2];
+  const el=document.getElementById('pvImage');
+  const src=imgs[pvIndex];
+  el.innerHTML = src ? `<img class="show" src="${src}" alt="${pvProduct.name}">` : `<span class="pv-icon">${pvProduct.icon}</span>`;
+}
+document.getElementById('pvPrev').addEventListener('click',()=>{pvIndex=(pvIndex+2)%3;renderPVImage();});
+document.getElementById('pvNext').addEventListener('click',()=>{pvIndex=(pvIndex+1)%3;renderPVImage();});
+document.getElementById('pvClose').addEventListener('click',()=>document.getElementById('pvOverlay').classList.remove('open'));
+document.getElementById('pvCart').addEventListener('click',()=>addToCart(pvProduct.id));
+document.getElementById('pvBuy').addEventListener('click',()=>buyNow(pvProduct.id));
+
+/* Cart */
+function addToCart(id){
+  const item=cart.find(c=>c.id===id);
+  if(item) item.qty++; else cart.push({id,qty:1});
+  saveCart(); renderCart(); toast('Added to cart.');
+  const btn=document.getElementById('cartBtn'); btn.style.transform='scale(1.12)'; setTimeout(()=>btn.style.transform='',180);
+}
+function removeFromCart(id){ cart=cart.filter(c=>c.id!==id); saveCart(); renderCart(); }
+function changeQty(id,d){
+  const item=cart.find(c=>c.id===id); if(!item) return;
+  item.qty+=d; if(item.qty<=0){ removeFromCart(id); return; }
+  saveCart(); renderCart();
+}
+function renderCart(){
+  const box=document.getElementById('cartItems');
+  const count=cart.reduce((s,c)=>s+c.qty,0);
+  const countEl=document.getElementById('cartCount');
+  countEl.textContent=count; countEl.classList.toggle('show',count>0);
+  if(!cart.length){ box.innerHTML='<p class="cart-empty">Your cart is empty.</p>'; document.getElementById('cartTotal').textContent=money(0); return; }
+  let total=0;
+  box.innerHTML=cart.map(c=>{
+    const p=PRODUCTS.find(x=>x.id===c.id); total+=p.price*c.qty;
+    return `<div class="cart-item"><div class="ci-icon">${mediaHTML(p,false)}</div>
+      <div class="ci-info"><h4>${p.name}</h4><span class="price">${money(p.price)}</span>
+        <div class="ci-qty"><button data-dec="${p.id}">−</button><span>${c.qty}</span><button data-inc="${p.id}">+</button></div>
+      </div><button class="ci-remove" data-rm="${p.id}">×</button></div>`;
+  }).join('');
+  document.getElementById('cartTotal').textContent=money(total);
+}
+document.getElementById('cartItems').addEventListener('click',e=>{
+  const inc=e.target.closest('[data-inc]'), dec=e.target.closest('[data-dec]'), rm=e.target.closest('[data-rm]');
+  if(inc) changeQty(Number(inc.dataset.inc),1);
+  if(dec) changeQty(Number(dec.dataset.dec),-1);
+  if(rm) removeFromCart(Number(rm.dataset.rm));
+});
+document.getElementById('cartBtn').addEventListener('click',()=>{renderCart();document.getElementById('cartOverlay').classList.add('open');});
+document.getElementById('cartClose').addEventListener('click',()=>document.getElementById('cartOverlay').classList.remove('open'));
+document.getElementById('checkoutBtn').addEventListener('click',()=>{
+  if(!cart.length){ toast('Your cart is empty.'); return; }
+  if(!user){ openAuth('purchase'); return; }
+  const items=cart.map(c=>{const p=PRODUCTS.find(x=>x.id===c.id); return {name:p.name,price:p.price,qty:c.qty};});
+  const total=items.reduce((s,it)=>s+it.price*it.qty,0);
+  addOrder(items,total); cart=[]; saveCart(); renderCart();
+  document.getElementById('cartOverlay').classList.remove('open');
+  toast(`Order placed — ${money(total)}. Payment integration pending.`);
+});
+
+/* Buy Now */
+function buyNow(id){
+  if(!user){ openAuth('purchase'); return; }
+  const p=PRODUCTS.find(x=>x.id===id);
+  addOrder([{name:p.name,price:p.price,qty:1}],p.price);
+  toast(`Order placed for "${p.name}" — ${money(p.price)}. Payment integration pending.`);
+}
+
+/* Auth */
+function openAuth(mode){
+  authMode=mode||'welcome';
+  authRegistering=false;
+  hideBadge();
+  const subs={purchase:'Please log in or create an account to complete your purchase.',switch:'Sign in with a different account.',welcome:'Sign in to unlock purchases, or browse the store as a guest.'};
+  document.getElementById('authWelcomeSub').textContent=subs[authMode];
+  document.getElementById('guestBtn').style.display = authMode==='welcome' ? 'block' : 'none';
+  document.getElementById('authWelcome').style.display='block';
+  document.getElementById('authEmail').style.display='none';
+  document.getElementById('authOverlay').classList.add('open');
+}
+function closeAuth(){ document.getElementById('authOverlay').classList.remove('open'); }
+document.getElementById('guestBtn').addEventListener('click',()=>{ isGuest=true; user=null; closeAuth(); renderAccountUI(); toast('Browsing as guest — log in anytime to purchase.'); });
+
+/* Close welcome popup into a small bouncing corner badge, and back again */
+function showBadge(){
+  const b=document.getElementById('authBadge');
+  b.hidden=false; requestAnimationFrame(()=>b.classList.add('show'));
+}
+function hideBadge(){
+  const b=document.getElementById('authBadge');
+  b.classList.remove('show'); b.hidden=true;
+}
+document.getElementById('authClose').addEventListener('click',()=>{
+  const overlay=document.getElementById('authOverlay'), modal=overlay.querySelector('.modal');
+  modal.classList.add('closing');
+  setTimeout(()=>{
+    overlay.classList.remove('open');
+    modal.classList.remove('closing');
+    showBadge();
+  },480);
+});
+document.getElementById('authBadge').addEventListener('click',()=>{ hideBadge(); openAuth('welcome'); });
+
+function renderAuthTitle(){
+  document.getElementById('authEmailTitle').textContent = authRegistering
+    ? 'Create account'
+    : (authMethod==='Email' ? 'Sign in' : `Sign in with ${authMethod}`);
+  document.getElementById('switchLine').innerHTML = authRegistering
+    ? 'Already have an account? <a href="#" id="toggleMode">Sign in</a>'
+    : 'Don\'t have an account? <a href="#" id="toggleMode">Register</a>';
+  document.getElementById('toggleMode').addEventListener('click',toggleAuthMode);
+}
+function showAuthForm(method){
+  authMethod=method; authRegistering=false;
+  document.getElementById('emailInput').value=''; document.getElementById('passInput').value='';
+  renderAuthTitle();
+  document.getElementById('authWelcome').style.display='none';
+  document.getElementById('authEmail').style.display='block';
+}
+document.querySelectorAll('[data-social]').forEach(b=>b.addEventListener('click',()=>showAuthForm(b.dataset.social)));
+document.getElementById('showEmail').addEventListener('click',()=>showAuthForm('Email'));
+document.getElementById('authBack').addEventListener('click',()=>{
+  document.getElementById('authEmail').style.display='none';
+  document.getElementById('authWelcome').style.display='block';
+});
+function toggleAuthMode(e){
+  e.preventDefault();
+  authRegistering=!authRegistering;
+  renderAuthTitle();
+}
+document.getElementById('toggleMode').addEventListener('click',toggleAuthMode);
+document.getElementById('emailContinue').addEventListener('click',()=>{
+  const email=document.getElementById('emailInput').value.trim().toLowerCase();
+  const pass=document.getElementById('passInput').value;
+  const box=document.querySelector('.auth-box');
+  if(!email||!pass){ toast('Please fill in both fields.'); box.classList.remove('shake'); void box.offsetWidth; box.classList.add('shake'); return; }
+  if(authRegistering){
+    if(ACCOUNTS[email]){ toast('An account with this email already exists. Please sign in instead.'); box.classList.remove('shake'); void box.offsetWidth; box.classList.add('shake'); return; }
+    const name=email.split('@')[0].replace(/[.\-_]/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+    ACCOUNTS[email]={password:pass,name,orders:[]}; saveAccounts();
+    user={email,name,orders:[]}; isGuest=false; closeAuth(); renderAccountUI(); toast('Account created — welcome, '+name+'!');
+  }else{
+    const acc=ACCOUNTS[email];
+    if(!acc||acc.password!==pass){ toast('Invalid email or password. Please try again or register.'); box.classList.remove('shake'); void box.offsetWidth; box.classList.add('shake'); return; }
+    user={email,name:acc.name,orders:acc.orders||[]}; isGuest=false; closeAuth(); renderAccountUI(); toast('Welcome back, '+acc.name+'!');
+  }
+});
+
+/* Account panel */
+function renderAccountUI(){
+  const tip=document.getElementById('accountTip'), btn=document.getElementById('accountBtn');
+  tip.textContent = user ? user.name : (isGuest ? 'Guest' : 'Account');
+  btn.classList.toggle('active', !!user);
+  document.getElementById('panelName').textContent = user ? user.name : 'Guest';
+  document.getElementById('panelMail').textContent = user ? user.email : '';
+}
+function closeAccountPanel(){ document.getElementById('accountPanel').classList.remove('open'); }
+document.getElementById('accountBtn').addEventListener('click',e=>{
+  e.stopPropagation();
+  if(!user){ openAuth(isGuest?'switch':'welcome'); return; }
+  document.getElementById('accountPanel').classList.toggle('open');
+});
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#accountWrap')) closeAccountPanel();
+});
+function logout(){ user=null; isGuest=false; closeAccountPanel(); renderAccountUI(); openAuth('welcome'); toast('You have been logged out.'); }
+function switchAccount(){ user=null; isGuest=false; closeAccountPanel(); renderAccountUI(); openAuth('switch'); }
+document.getElementById('btnLogout').addEventListener('click',logout);
+document.getElementById('btnSwitch').addEventListener('click',switchAccount);
+document.getElementById('btnHistory').addEventListener('click',()=>{
+  closeAccountPanel();
+  const list=document.getElementById('historyList');
+  const orders=(user&&user.orders)||[];
+  list.innerHTML = orders.length ? orders.map(o=>`<div class="history-item"><div class="h-date">${o.date}</div>
+    ${o.items.map(it=>`<div class="h-line"><span>${it.name} ${it.qty>1?'× '+it.qty:''}</span><span>${money(it.price*it.qty)}</span></div>`).join('')}
+    <div class="h-total"><span>Total</span><span>${money(o.total)}</span></div></div>`).join('')
+    : '<p class="cart-empty">You haven\'t made any purchases yet.</p>';
+  document.getElementById('historyOverlay').classList.add('open');
+});
+document.getElementById('historyClose').addEventListener('click',()=>document.getElementById('historyOverlay').classList.remove('open'));
+
+/* Footer panels: Contact / Terms / Privacy */
+document.querySelectorAll('[data-open]').forEach(el=>el.addEventListener('click',e=>{
+  e.preventDefault();
+  document.getElementById(el.dataset.open).classList.add('open');
+}));
+document.getElementById('contactClose').addEventListener('click',()=>document.getElementById('contactOverlay').classList.remove('open'));
+document.getElementById('copyEmailBtn').addEventListener('click',()=>{
+  const email=document.getElementById('contactEmail').textContent;
+  const btn=document.getElementById('copyEmailBtn');
+  const done=()=>{ const old=btn.textContent; btn.textContent='Copied!'; toast('Email copied to clipboard.'); setTimeout(()=>btn.textContent=old,1600); };
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(email).then(done).catch(()=>toast('Could not copy — please copy it manually.')); }
+  else{ done(); }
+});
+document.getElementById('termsClose').addEventListener('click',()=>document.getElementById('termsOverlay').classList.remove('open'));
+document.getElementById('termsContinue').addEventListener('click',()=>document.getElementById('termsOverlay').classList.remove('open'));
+document.getElementById('privacyClose').addEventListener('click',()=>document.getElementById('privacyOverlay').classList.remove('open'));
+document.getElementById('privacyContinue').addEventListener('click',()=>document.getElementById('privacyOverlay').classList.remove('open'));
+
+/* Title hover */
+(function(){
+  const el=document.getElementById('heroTitle');
+  const txt=el.textContent;
+  el.innerHTML=[...txt].map(c=>`<span class="letter">${c===' '?'&nbsp;':c}</span>`).join('');
+  const letters=[...el.querySelectorAll('.letter')];
+  el.addEventListener('mousemove',e=>{
+    letters.forEach(l=>{
+      const r=l.getBoundingClientRect();
+      const dx=e.clientX-(r.left+r.width/2);
+      const move=Math.max(-9,Math.min(9,-dx/16));
+      l.style.transform=`translateY(${move}px)`;
+    });
+  });
+  el.addEventListener('mouseleave',()=>letters.forEach(l=>l.style.transform=''));
+})();
+
+/* Init */
+renderGrid();
+renderCart();
+renderAccountUI();
+setTimeout(()=>openAuth('welcome'),350);
+</script>
+</body>
+</html>
